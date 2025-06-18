@@ -1,0 +1,173 @@
+﻿@model IEnumerable<lab03.Models.Product>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    var isAdmin = User.IsInRole("Admin");
+    string search = ViewBag.Search as string ?? "";
+}
+
+<h2 class="mb-4">Sản phẩm</h2>
+
+<form method="get" class="mb-4 d-flex gap-2 align-items-start">
+    <input type="text" name="search" value="@search"
+           placeholder="Tìm sản phẩm hoặc danh mục"
+           class="form-control" style="max-width: 400px;" />
+
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+
+    @* Nút để hiển thị lại tất cả sản phẩm *@
+    <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">Hiển thị tất cả</a>
+</form>
+
+
+<table class="table table-bordered table-hover align-middle text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th>Mô tả</th>
+            <th>Danh mục</th>
+            <th>Hình ảnh</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@String.Format("{0:#,##0}₫", product.Price)</td>
+                <td>@product.Description</td>
+                <td>@product.Category?.Name</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="~/images/@product.ImageUrl" alt="Ảnh sản phẩm" class="img-thumbnail" width="100" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có ảnh</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-sm btn-outline-info">Xem</a>
+                    @if (isAdmin)
+                    {
+                        <a asp-area="Admin" asp-controller="ProductAdmin" asp-action="Update" asp-route-id="@product.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
+                        <form asp-area="Admin" asp-controller="ProductAdmin" asp-action="Delete" asp-route-id="@product.Id"
+                              method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    h2 {
+        color: #0059b3;
+        font-weight: 700;
+        margin-bottom: 25px;
+        font-family: Arial, sans-serif;
+    }
+
+    table {
+        background-color: #e6f2ff; /* nền xanh nhạt */
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 102, 204, 0.1);
+        font-family: Arial, sans-serif;
+        color: #003366;
+    }
+
+    thead.table-dark {
+        background-color: #004080;
+        color: white;
+        font-weight: 700;
+    }
+
+        thead.table-dark th {
+            border: none;
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+    tbody tr {
+        background-color: #f7fbff;
+        transition: background-color 0.3s ease;
+    }
+
+        tbody tr:hover {
+            background-color: #d0e7ff;
+        }
+
+    tbody td {
+        vertical-align: middle !important;
+        padding: 12px 15px;
+        border-top: 1px solid #99ccff;
+        word-wrap: break-word;
+        max-width: 200px;
+    }
+
+    img.img-thumbnail {
+        border-radius: 6px;
+        border: 1.5px solid #99ccff;
+        max-width: 100px;
+        height: auto;
+        object-fit: contain;
+        background-color: #f0f8ff;
+    }
+
+    .text-muted {
+        color: #6699cc !important;
+        font-style: italic;
+    }
+
+    /* Các nút hành động */
+    .btn-outline-info {
+        color: #0059b3;
+        border-color: #99ccff;
+        font-weight: 600;
+        margin-right: 4px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-info:hover {
+            background-color: #0059b3;
+            color: white;
+            border-color: #004080;
+        }
+
+    .btn-outline-warning {
+        color: #cc9900;
+        border-color: #ffecb3;
+        font-weight: 600;
+        margin-right: 4px;
+    }
+
+        .btn-outline-warning:hover {
+            background-color: #cc9900;
+            color: white;
+            border-color: #b38600;
+        }
+
+    .btn-outline-danger {
+        color: #cc3300;
+        border-color: #f7c6c5;
+        font-weight: 600;
+    }
+
+        .btn-outline-danger:hover {
+            background-color: #cc3300;
+            color: white;
+            border-color: #992600;
+        }
+
+    form[style*="display:inline;"] {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+    }
+</style>

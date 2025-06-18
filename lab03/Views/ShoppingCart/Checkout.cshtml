@@ -1,0 +1,83 @@
+﻿@model Order
+
+<h2>Checkout</h2>
+
+<form asp-action="Checkout" method="post">
+    <div class="form-group">
+        <label asp-for="ShippingAddress">Shipping Address</label>
+        <input asp-for="ShippingAddress" class="form-control" placeholder="Enter your shipping address" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Notes">Notes</label>
+        <textarea asp-for="Notes" class="form-control" placeholder="Any additional notes"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success btn-lg mt-3">Place Order</button>
+</form>
+<style>
+    form {
+        max-width: 500px;
+        margin: 40px auto;
+        background-color: #e6f2ff; /* nền xanh dương nhạt */
+        padding: 30px 35px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 102, 204, 0.15);
+        font-family: Arial, sans-serif;
+        color: #003366;
+    }
+
+    h2 {
+        color: #0059b3;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #004080;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    input.form-control,
+    textarea.form-control {
+        border-radius: 8px;
+        border: 1.5px solid #99ccff;
+        padding: 10px 12px;
+        font-size: 1rem;
+        color: #003366;
+        transition: border-color 0.3s ease;
+        resize: vertical;
+    }
+
+        input.form-control:focus,
+        textarea.form-control:focus {
+            border-color: #0059b3;
+            outline: none;
+            box-shadow: 0 0 6px #99ccff;
+        }
+
+    button.btn-success {
+        background-color: #0059b3;
+        border-color: #004080;
+        font-weight: 700;
+        width: 100%;
+        padding: 12px 0;
+        border-radius: 10px;
+        font-size: 1.25rem;
+        transition: background-color 0.3s ease;
+        margin-top: 25px;
+        cursor: pointer;
+    }
+
+        button.btn-success:hover {
+            background-color: #003366;
+            border-color: #002244;
+        }
+</style>

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NOVAShop", "lab03\NOVAShop.csproj", "{EC849929-970E-4DF3-9D5F-7DC5CA49F527}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC849929-970E-4DF3-9D5F-7DC5CA49F527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC849929-970E-4DF3-9D5F-7DC5CA49F527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC849929-970E-4DF3-9D5F-7DC5CA49F527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC849929-970E-4DF3-9D5F-7DC5CA49F527}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C86ECC94-2625-410F-8F51-7E24CFCFBB72}
+	EndGlobalSection
+EndGlobal

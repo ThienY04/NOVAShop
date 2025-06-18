@@ -1,0 +1,34 @@
+﻿@model lab03.Models.Product
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-primary mb-4">Product Details</h2>
+
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <h4><strong>Name:</strong> @Model.Name</h4>
+                <h4><strong>Price:</strong> $@Model.Price</h4>
+                <h5><strong>Description:</strong></h5>
+                <p>@Model.Description</p>
+            </div>
+
+            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="Product Image"
+                         class="img-fluid rounded"
+                         style="max-width: 100%; height: auto; object-fit: contain;" />
+                }
+                else
+                {
+                    <span>No image available</span>
+                }
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-outline-secondary">← Back to List</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,171 @@
+﻿@model lab03.Models.Product
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Edit Product";
+}
+<h2>Edit Product</h2>
+<style>
+    form {
+        background-color: #e6f2ff; /* nền xanh dương nhạt */
+        padding: 30px 40px;
+        border-radius: 12px;
+        max-width: 600px;
+        margin: 40px auto;
+        box-shadow: 0 6px 15px rgba(0, 102, 204, 0.15);
+        font-family: Arial, sans-serif;
+        color: #003366;
+    }
+
+    h2 {
+        color: #0059b3;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #004080;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    input.form-control,
+    select.form-control,
+    textarea.form-control {
+        border-radius: 8px;
+        border: 1.5px solid #99ccff;
+        padding: 10px 12px;
+        font-size: 1rem;
+        color: #003366;
+        transition: border-color 0.3s ease;
+    }
+
+        input.form-control:focus,
+        select.form-control:focus,
+        textarea.form-control:focus {
+            border-color: #0059b3;
+            outline: none;
+            box-shadow: 0 0 6px #99ccff;
+        }
+
+    span.text-danger {
+        font-size: 0.9rem;
+        margin-top: 3px;
+        display: block;
+    }
+
+    #previewImage {
+        max-width: 200px;
+        border-radius: 8px;
+        border: 1.5px solid #99ccff;
+        background-color: #f0f8ff;
+        display: block;
+        margin-top: 10px;
+        object-fit: contain;
+    }
+
+    .form-group.d-flex {
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    input[type="submit"].btn-primary {
+        background-color: #0059b3;
+        border-color: #004080;
+        font-weight: 700;
+        padding: 10px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        input[type="submit"].btn-primary:hover {
+            background-color: #003366;
+            border-color: #002244;
+        }
+
+    a.btn-outline-secondary {
+        color: #0059b3;
+        border-color: #99ccff;
+        font-weight: 600;
+        padding: 10px 30px;
+        border-radius: 8px;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        a.btn-outline-secondary:hover {
+            background-color: #0059b3;
+            color: white;
+            border-color: #004080;
+            text-decoration: none;
+        }
+</style>
+
+
+<form asp-action="Update" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+<textarea asp-for="Description" class="form-control"></textarea>
+
+        <span asp-validation-for="Description" class="text-
+danger"></span>
+
+    </div>
+    <div class="form-group">
+        <label asp-for="CategoryId">Category</label>
+        <select asp-for="CategoryId" asp-items="@ViewBag.Categories"
+                class="form-control"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageUrl">Product Image</label>
+        <input type="file" asp-for="ImageUrl" class="form-control"
+               id="imageInput" />
+    </div>
+    <div class="col-8 mt-4">
+        <img src="@Model.ImageUrl" alt="Product Image" style="max-width:200px;" id="previewImage" />
+    </div>
+
+    <div class="form-group d-flex gap-3 mt-4">
+        <input type="submit" value="Update" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-outline-secondary">← Back to List</a>
+    </div>
+
+</form>
+    
+
+
+<script>
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById("previewImage")
+                    img.src = e.target.result
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>

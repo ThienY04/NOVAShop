@@ -1,0 +1,52 @@
+﻿@model IEnumerable<lab03.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Danh sách sản phẩm</h2>
+
+<a asp-action="Add" class="btn btn-primary mb-3">+ Thêm sản phẩm mới</a>
+
+<table class="table table-bordered table-hover align-middle text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th>Mô tả</th>
+            <th>Danh mục</th>
+            <th>Hình ảnh</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@String.Format("{0:#,##0}₫", product.Price)</td>
+                    <td>@product.Description</td>
+                    <td>@product.Category?.Name</td>
+                    <td>
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                                <img src="~/images/@product.ImageUrl" alt="Ảnh sản phẩm" class="img-thumbnail" width="100" />
+                    }
+                    else
+                    {
+                                <span class="text-muted">Không có ảnh</span>
+                    }
+                    </td>
+                    <td>
+                        <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-sm btn-outline-info">Xem</a>
+                        <a asp-action="Update" asp-route-id="@product.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
+                        <form asp-action="Delete" asp-route-id="@product.Id"
+                              method="post" style="display:inline;" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

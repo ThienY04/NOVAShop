@@ -1,0 +1,65 @@
+﻿@model ShoppingCart
+
+<h2>Your Cart</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Total</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td> 
+                    <td>@(item.Price * item.Quantity)</td> 
+                    <td>
+                        <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-danger btn-sm">
+                            Remove
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a asp-action="Checkout" class="btn btn-success btn-lg mt-3">Tới trang thanh toán</a>
+
+<style>
+    .table {
+        background-color: #cce6ff; 
+        color: #003366; 
+    }
+
+    .thead-dark {
+        background-color: #0059b3 !important; 
+        color: #ffffff !important; 
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #e6f2ff; 
+    }
+
+    .table-striped tbody tr:nth-of-type(even) {
+        background-color: #cce6ff; 
+    }
+
+    .btn-danger {
+        background-color: #ff6666;
+        border-color: #ff4d4d;
+    }
+
+    .btn-success {
+        background-color: #66cc66;
+        border-color: #4da64d;
+    }
+</style>

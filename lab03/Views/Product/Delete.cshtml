@@ -1,0 +1,49 @@
+﻿@model lab03.Models.Product
+<h2>Delete Product</h2>
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <p>Are you sure you want to delete @Model.Name?</p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+</form>
+<style>
+    form {
+        background-color: #e6f2ff; /* nền xanh dương nhạt */
+        padding: 25px 30px;
+        border-radius: 10px;
+        max-width: 480px;
+        margin: 40px auto;
+        box-shadow: 0 4px 8px rgba(0, 102, 204, 0.1);
+        color: #003366;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+
+    h2 {
+        color: #004080;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        color: #003366;
+    }
+
+    button.btn-danger {
+        background-color: #cc3300;
+        border-color: #992600;
+        font-weight: 700;
+        padding: 10px 30px;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        border-radius: 6px;
+        width: 100%;
+    }
+
+        button.btn-danger:hover {
+            background-color: #992600;
+            border-color: #661a00;
+        }
+</style>
