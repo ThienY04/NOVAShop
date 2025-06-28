@@ -1,0 +1,57 @@
+﻿@model IEnumerable<lab03.Models.Category>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary mb-0">🗂️ Danh sách danh mục</h2>
+        <a asp-action="Add" class="btn btn-success rounded-pill px-4">
+            ➕ Thêm mới
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm">
+            Chưa có danh mục nào.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover table-bordered m-0 align-middle text-center">
+                    <thead class="table-light">
+                        <tr class="text-dark">
+                            <th class="text-start px-4 py-3">📁 Tên danh mục</th>
+                            <th class="py-3">⚙️ Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var category in Model)
+                        {
+                            <tr>
+                                <td class="text-start px-4">@category.Name</td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-action="Display" asp-route-id="@category.Id"
+                                           class="btn btn-sm btn-outline-info rounded-pill">
+                                            👁️ Xem
+                                        </a>
+                                        <a asp-action="Update" asp-route-id="@category.Id"
+                                           class="btn btn-sm btn-outline-warning rounded-pill">
+                                            ✏️ Sửa
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@category.Id"
+                                           class="btn btn-sm btn-outline-danger rounded-pill"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                            🗑️ Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,24 @@
+﻿@model lab03.Models.Category
+
+<div class="container my-4">
+    <h2 class="text-danger mb-3">Xoá danh mục</h2>
+
+    @if (TempData["DeleteError"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Lỗi:</strong> @TempData["DeleteError"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+    }
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="alert alert-danger">
+            <p>Bạn có chắc chắn muốn xoá danh mục <strong>@Model.Name</strong>?</p>
+        </div>
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-danger">🗑️ Xoá</button>
+            <a asp-action="Index" class="btn btn-secondary">Huỷ</a>
+        </div>
+    </form>
+</div>

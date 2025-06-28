@@ -1,0 +1,112 @@
+﻿@model lab03.ViewModels.ProductViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm mới</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Add" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Tên sản phẩm</label>
+                    <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label">Giá (VNĐ)</label>
+                    <input asp-for="Price" class="form-control" placeholder="VD: 250000" />
+                    <span asp-validation-for="Price" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Thông tin chi tiết..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Danh mục</label>
+                    <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Image" class="form-label">Hình ảnh</label>
+                    <input type="file" asp-for="Image" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                    <div class="mt-2">
+                        <img id="preview" src="#" alt="Preview" class="img-thumbnail d-none" style="max-height: 200px;" />
+                    </div>
+                </div>
+
+                <!-- Biến thể -->
+                <h5 class="mt-4">(Màu sắc - Kích thước - Số lượng)</h5>
+                <table class="table table-bordered" id="variant-table">
+                    <thead>
+                        <tr>
+                            <th>Màu sắc</th>
+                            <th>Kích thước</th>
+                            <th>Số lượng</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="Colors[0]" class="form-control" placeholder="VD: Đỏ" /></td>
+                            <td><input type="text" name="Sizes[0]" class="form-control" placeholder="VD: M" /></td>
+                            <td><input type="number" name="StockByVariant[0]" class="form-control" value="0" /></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addVariantRow()">+ Thêm </button>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-check-circle me-1"></i>Thêm
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                        <i class="bi bi-arrow-left me-1"></i>Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function addVariantRow() {
+            const table = document.getElementById("variant-table").getElementsByTagName('tbody')[0];
+            const rowCount = table.rows.length;
+            const row = table.insertRow();
+
+            row.innerHTML = `
+                <td><input type="text" name="Colors[${rowCount}]" class="form-control" placeholder="VD: Đỏ" /></td>
+                <td><input type="text" name="Sizes[${rowCount}]" class="form-control" placeholder="VD: M" /></td>
+                <td><input type="number" name="StockByVariant[${rowCount}]" class="form-control" value="0" /></td>
+                <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">🗑️</button></td>
+            `;
+        }
+    </script>
+}
