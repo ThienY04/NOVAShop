@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "ouB8O5L6LJRl9KfWAOdUOYMQ64aMjjTZ6SYgfRUUA+I=",
+  "Hash": "HA1k8zTgpYwRrGiibcy6BmWpW5Dn5E6SM+ygpJ7Ya7c=",
   "Source": "lab03",
   "BasePath": "_content/lab03",
   "Mode": "Default",
@@ -1288,6 +1288,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/images/11-28e37da9-bee4-4697-864b-5b9ad5ae7580.png.webp"
+    },
+    {
+      "Identity": "/Users/truchien/Downloads/lab03/lab03/lab03/wwwroot/images/4-669cbe3e-ad84-40b1-814a-b5cf6b0b994b.png",
+      "SourceId": "lab03",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/truchien/Downloads/lab03/lab03/lab03/wwwroot/",
+      "BasePath": "_content/lab03",
+      "RelativePath": "images/4-669cbe3e-ad84-40b1-814a-b5cf6b0b994b.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/images/4-669cbe3e-ad84-40b1-814a-b5cf6b0b994b.png"
     },
     {
       "Identity": "/Users/truchien/Downloads/lab03/lab03/lab03/wwwroot/images/42-734f5fb0-d99a-42f1-8c56-6cb661691014.png.webp",

@@ -1,10 +1,12 @@
-﻿@using lab03.Helpers 
-@model lab03.Models.Product 
+﻿@using lab03.Helpers
+@model lab03.Models.Product
 
 @{
     ViewData["Title"] = Model.Name;
-    var variants = Model.Variants?.Select(v => new { v.Color, v.Size, v.Stock }).ToList();
+    var variantData = Model.Variants?.Select(v => new { v.Color, v.Size, v.Stock }).ToList();
+    var isAuthenticated = User.Identity.IsAuthenticated;
 }
+
 
 <div class="container my-5">
     <div class="row gx-5">
@@ -41,7 +43,6 @@
             </p>
 
             <form id="productForm" onsubmit="addToCart(event)">
-
                 <input type="hidden" name="productId" value="@Model.Id" />
 
                 <!-- Size -->
@@ -89,6 +90,18 @@
     </div>
 </div>
 
+<!-- ✅ Bootstrap Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="cartToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                ✅ Đã thêm vào giỏ hàng!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
 <!-- STYLE -->
 <style>
     .color-circle {
@@ -119,190 +132,148 @@
     .btn-check:checked + .color-circle .selected-dot {
         opacity: 1;
     }
+    /* Ẩn nút tăng/giảm trên Chrome, Safari, Edge */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Ẩn trên Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
 </style>
 
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const variants = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(variantData));
+            const isAuthenticated = @isAuthenticated.ToString().ToLower(); // true hoặc false
             const form = document.getElementById("productForm");
             const sizeInputs = document.querySelectorAll('input[name="size"]');
             const colorInputs = document.querySelectorAll('input[name="color"]');
             const sizeError = document.getElementById("size-error");
             const colorError = document.getElementById("color-error");
+            const qty = document.getElementById("quantity");
+            const btnMinus = document.getElementById("btn-minus");
+            const btnPlus = document.getElementById("btn-plus");
             const addToCartBtn = document.getElementById("add-to-cart-btn");
 
             sizeError.style.display = "none";
             colorError.style.display = "none";
 
-            const qty = document.getElementById("quantity");
-            document.getElementById("btn-minus").addEventListener("click", () => {
-                if (parseInt(qty.value) > 1) qty.value = parseInt(qty.value) - 1;
-            });
-            document.getElementById("btn-plus").addEventListener("click", () => {
-            const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
-            const selectedSize = document.querySelector('input[name="size"]:checked')?.value;
-            const quantityInput = document.getElementById("quantity");
-            let currentQty = parseInt(quantityInput.value);
-
-                if (selectedColor && selectedSize) {
-                    const variant = variants.find(v => v.Color === selectedColor && v.Size === selectedSize);
-                    if (variant && currentQty < variant.Stock) {
-                        quantityInput.value = currentQty + 1;
-                    }
-                } else {
-                    quantityInput.value = currentQty + 1;
-                }
-            });
-
-
-            sizeInputs.forEach(i => i.addEventListener("change", () => {
-                sizeError.style.display = "none";
-                checkVariantExists();
-            }));
-
-            colorInputs.forEach(i => i.addEventListener("change", () => {
-                colorError.style.display = "none";
-                checkVariantExists();
-            }));
-
-            form.addEventListener("submit", function (e) {
-                const isSizeChecked = Array.from(sizeInputs).some(i => i.checked);
-                const isColorChecked = Array.from(colorInputs).some(i => i.checked);
-
-                if (!isSizeChecked || !isColorChecked) {
-                    e.preventDefault();
-                    sizeError.style.display = isSizeChecked ? "none" : "block";
-                    colorError.style.display = isColorChecked ? "none" : "block";
-                }
-            });
-
-            const variants = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(variants));
-            function checkVariantExists() {
+            function getSelectedVariant() {
                 const selectedColor = document.querySelector('input[name="color"]:checked')?.value;
                 const selectedSize = document.querySelector('input[name="size"]:checked')?.value;
-                const quantityInput = document.getElementById("quantity");
+                return variants.find(v => v.Color === selectedColor && v.Size === selectedSize);
+            }
 
-                if (selectedColor && selectedSize) {
-                    const variant = variants.find(v => v.Color === selectedColor && v.Size === selectedSize);
+            btnMinus.addEventListener("click", () => {
+                if (parseInt(qty.value) > 1) qty.value = parseInt(qty.value) - 1;
+            });
 
-                    if (variant) {
-                        const maxStock = variant.Stock;
+            btnPlus.addEventListener("click", () => {
+                const variant = getSelectedVariant();
+                let currentQty = parseInt(qty.value);
+                if (variant) {
+                    if (currentQty < variant.Stock) qty.value = currentQty + 1;
+                } else {
+                    qty.value = currentQty + 1;
+                }
+            });
 
-                        // Giới hạn số lượng
-                        quantityInput.max = maxStock;
-                        if (parseInt(quantityInput.value) > maxStock) {
-                            quantityInput.value = maxStock;
-                        }
+            sizeInputs.forEach(i => i.addEventListener("change", checkVariantExists));
+            colorInputs.forEach(i => i.addEventListener("change", checkVariantExists));
 
-                        // Cập nhật nút Thêm
-                        addToCartBtn.disabled = maxStock === 0;
-                        addToCartBtn.textContent = maxStock === 0 ? "Hết hàng" : "Thêm vào giỏ hàng";
-                        addToCartBtn.classList.toggle("btn-secondary", maxStock === 0);
-                        addToCartBtn.classList.toggle("btn-dark", maxStock > 0);
-                    } else {
-                        // Không tìm thấy biến thể phù hợp
+            function checkVariantExists() {
+                const variant = getSelectedVariant();
+
+                if (variant) {
+                    const maxStock = variant.Stock;
+                    qty.max = maxStock;
+                    if (parseInt(qty.value) > maxStock) qty.value = maxStock;
+
+                    addToCartBtn.disabled = maxStock === 0;
+                    addToCartBtn.textContent = maxStock === 0 ? "Hết hàng" : "Thêm vào giỏ hàng";
+                    addToCartBtn.classList.toggle("btn-secondary", maxStock === 0);
+                    addToCartBtn.classList.toggle("btn-dark", maxStock > 0);
+                } else {
+                    addToCartBtn.disabled = true;
+                    addToCartBtn.textContent = "Hết hàng";
+                    addToCartBtn.classList.remove("btn-dark");
+                    addToCartBtn.classList.add("btn-secondary");
+                }
+            }
+
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                if (!isAuthenticated) {
+                    alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+                    return;
+                }
+                const formData = new FormData(form);
+                const size = formData.get("size");
+                const color = formData.get("color");
+                const quantity = parseInt(formData.get("quantity"));
+                const productId = formData.get("productId");
+
+                if (!size || !color) {
+                    if (!size) sizeError.style.display = "block";
+                    if (!color) colorError.style.display = "block";
+                    return;
+                }
+
+                const variant = getSelectedVariant();
+                if (!variant) {
+                    alert("Biến thể sản phẩm không hợp lệ.");
+                    return;
+                }
+
+                const response = await fetch("/ShoppingCart/AddToCart", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `productId=${productId}&quantity=${quantity}&size=${size}&color=${encodeURIComponent(color)}`
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    updateCartCount(data.cartCount);
+
+                    // Hiện toast
+                    const toastEl = document.getElementById('cartToast');
+                    const toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+
+                    const newQuantityInCart = data.quantityInCart ?? 0;
+                    if (newQuantityInCart >= variant.Stock) {
                         addToCartBtn.disabled = true;
                         addToCartBtn.textContent = "Hết hàng";
                         addToCartBtn.classList.remove("btn-dark");
                         addToCartBtn.classList.add("btn-secondary");
                     }
+
                 } else {
-                    addToCartBtn.disabled = false;
-                    addToCartBtn.textContent = "Thêm vào giỏ hàng";
-                    addToCartBtn.classList.add("btn-dark");
-                    addToCartBtn.classList.remove("btn-secondary");
+                    alert(data.message);
                 }
-            }
-
-            function submitAddToCart(event) {
-                event.preventDefault();
-
-                const form = document.getElementById("productForm");
-                const productId = form.querySelector('input[name="productId"]').value;
-                const quantity = form.querySelector('input[name="quantity"]').value;
-                const size = form.querySelector('input[name="size"]:checked')?.value;
-                const color = form.querySelector('input[name="color"]:checked')?.value;
-
-                if (!size || !color) {
-                    if (!size) document.getElementById("size-error").style.display = "block";
-                    if (!color) document.getElementById("color-error").style.display = "block";
-                    return;
-                }
-
-                fetch('/ShoppingCart/AddToCart', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `productId=${productId}&quantity=${quantity}&size=${size}&color=${encodeURIComponent(color)}`
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            updateCartCount(data.totalQuantity);
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Lỗi khi thêm giỏ hàng:', error);
-                    });
-                }
-
-        function updateCartCount(count) {
-            let badge = document.querySelector('.badge-cart');
-            if (badge) {
-                badge.textContent = count;
-            } else {
-                const newBadge = document.createElement("span");
-                newBadge.className = "badge-cart";
-                newBadge.textContent = count;
-
-                const cartBtn = document.querySelector('.cart-button');
-                if (cartBtn) {
-                    cartBtn.appendChild(newBadge);
-                }
-            }
-        }
-
-            checkVariantExists();
-        });
-    </script>
-
-    <script>
-        async function addToCart(e) {
-            e.preventDefault();
-
-            const form = document.getElementById("productForm");
-            const formData = new FormData(form);
-
-            const selectedColor = formData.get("color");
-            const selectedSize = formData.get("size");
-            const quantity = parseInt(formData.get("quantity")) || 1;
-            const productId = formData.get("productId");
-
-            if (!selectedColor || !selectedSize) return;
-
-            const response = await fetch("/ShoppingCart/AddToCart", {
-                method: "POST",
-                body: formData
             });
 
-            if (response.ok) {
-                const data = await response.json();
+            function updateCartCount(count) {
                 const badge = document.querySelector(".badge-cart");
                 if (badge) {
-                    badge.textContent = data.cartCount;
+                    badge.textContent = count;
                 } else {
                     const btn = document.querySelector(".cart-button");
                     const newBadge = document.createElement("span");
                     newBadge.className = "badge-cart";
-                    newBadge.textContent = data.cartCount;
+                    newBadge.textContent = count;
                     btn.appendChild(newBadge);
                 }
-            } else {
-                alert("Thêm vào giỏ hàng thất bại");
             }
-        }
+
+            checkVariantExists();
+        });
     </script>
 }

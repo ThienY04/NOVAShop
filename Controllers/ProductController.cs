@@ -21,54 +21,54 @@ namespace lab03.Controllers
         }
 
         // Hiển thị danh sách sản phẩm
-        public async Task<IActionResult> Index(string? searchName, int? categoryId)
-        {
-            var products = await _productRepository.GetAllAsync();
-            var categories = await _categoryRepository.GetAllAsync();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+        // public async Task<IActionResult> Index(string? searchName, int? categoryId)
+        // {
+        //     var products = await _productRepository.GetAllAsync();
+        //     var categories = await _categoryRepository.GetAllAsync();
+        //     ViewBag.Categories = new SelectList(categories, "Id", "Name");
 
-            if (!string.IsNullOrEmpty(searchName))
-            {
-                products = products.Where(p => p.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
+        //     if (!string.IsNullOrEmpty(searchName))
+        //     {
+        //         products = products.Where(p => p.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase)).ToList();
+        //     }
 
-            if (categoryId.HasValue && categoryId.Value != 0)
-            {
-                products = products.Where(p => p.CategoryId == categoryId.Value).ToList();
-            }
+        //     if (categoryId.HasValue && categoryId.Value != 0)
+        //     {
+        //         products = products.Where(p => p.CategoryId == categoryId.Value).ToList();
+        //     }
 
-            return View(products);
-        }
+        //     return View(products);
+        // }
 
        // Hiển thị form thêm sản phẩm mới
-        public async Task<IActionResult> Add()
-        {
-            var categories = await _categoryRepository.GetAllAsync();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
-            return View();
-        }
-        //Xử lý thêm sản phẩm mới
-       [HttpPost]
-        public async Task<IActionResult> Add(Product product, IFormFile
-        imageUrl)
-        {
-            if (ModelState.IsValid)
-            {
-                if (imageUrl != null)
-                {
-                    // Lưu hình ảnh đại diện tham khảo bài 02 hàm SaveImage
+    //     public async Task<IActionResult> Add()
+    //     {
+    //         var categories = await _categoryRepository.GetAllAsync();
+    //         ViewBag.Categories = new SelectList(categories, "Id", "Name");
+    //         return View();
+    //     }
+    //     //Xử lý thêm sản phẩm mới
+    //    [HttpPost]
+    //     public async Task<IActionResult> Add(Product product, IFormFile
+    //     imageUrl)
+    //     {
+    //         if (ModelState.IsValid)
+    //         {
+    //             if (imageUrl != null)
+    //             {
+    //                 // Lưu hình ảnh đại diện tham khảo bài 02 hàm SaveImage
 
-                    product.ImageUrl = await SaveImage(imageUrl);
+    //                 product.ImageUrl = await SaveImage(imageUrl);
 
-                }
-                await _productRepository.AddAsync(product);
-                return RedirectToAction(nameof(Index));
-            }
-            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
-            var categories = await _categoryRepository.GetAllAsync();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
-            return View(product);
-        }
+    //             }
+    //             await _productRepository.AddAsync(product);
+    //             return RedirectToAction(nameof(Index));
+    //         }
+    //         // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
+    //         var categories = await _categoryRepository.GetAllAsync();
+    //         ViewBag.Categories = new SelectList(categories, "Id", "Name");
+    //         return View(product);
+    //     }
         // Viết thêm hàm SaveImage (tham khảo bài 02)
         private async Task<string> SaveImage(IFormFile image)
         {

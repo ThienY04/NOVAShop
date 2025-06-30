@@ -1,6 +1,7 @@
 using lab03.Models;
 using lab03.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace lab03.Controllers
@@ -9,16 +10,58 @@ namespace lab03.Controllers
     {
         //private readonly ILogger<HomeController> _logger;
         private readonly IProductRepository _productRepository;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(IProductRepository productRepository)
+        public HomeController(IProductRepository productRepository, ApplicationDbContext context)
         {
             _productRepository = productRepository;
+            _context = context;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, int? categoryId, int? minPrice, int? maxPrice, string? sort)
         {
-            var products = await _productRepository.GetAllAsync();
-            return View(products);  
+            var productsQuery = _context.Products
+                .Include(p => p.Category)
+                .AsQueryable();
+
+            // Tìm kiếm theo tên
+            if (!string.IsNullOrEmpty(search))
+            {
+                productsQuery = productsQuery.Where(p => p.Name.Contains(search));
+            }
+
+            // Lọc danh mục
+            if (categoryId.HasValue)
+            {
+                productsQuery = productsQuery.Where(p => p.CategoryId == categoryId);
+            }
+
+            // Lọc khoảng giá
+            if (minPrice.HasValue)
+            {
+                productsQuery = productsQuery.Where(p => p.Price >= minPrice);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                productsQuery = productsQuery.Where(p => p.Price <= maxPrice);
+            }
+
+            // Sắp xếp
+            productsQuery = sort switch
+            {
+                "name_asc" => productsQuery.OrderBy(p => p.Name),
+                "name_desc" => productsQuery.OrderByDescending(p => p.Name),
+                "price_asc" => productsQuery.OrderBy(p => p.Price),
+                "price_desc" => productsQuery.OrderByDescending(p => p.Price),
+                _ => productsQuery.OrderByDescending(p => p.Id) // mặc định: mới nhất
+            };
+
+            // Lấy danh sách danh mục cho dropdown
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            return View(await productsQuery.ToListAsync());
         }
+
 
         //public HomeController(ILogger<HomeController> logger)
         //{

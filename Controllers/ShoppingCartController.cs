@@ -116,7 +116,8 @@ namespace lab03.Controllers
             {
                 success = true,
                 message = "Đã thêm vào giỏ.",
-                cartCount = totalQuantity
+                cartCount = totalQuantity,
+                quantityInCart = quantityInCart + quantity
             });
         }
 

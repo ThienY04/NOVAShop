@@ -46,24 +46,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvQWRtaW4vVmlld3MvUHJvZHVjdEFkbWluL0FkZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/truchien/Downloads/lab03/lab03/lab03/Areas/Admin/Views/ProductAdmin/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXMvQWRtaW4vVmlld3MvUHJvZHVjdEFkbWluL0RlbGV0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
 [/Users/truchien/Downloads/lab03/lab03/lab03/Areas/Admin/Views/ProductAdmin/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvQWRtaW4vVmlld3MvUHJvZHVjdEFkbWluL0RldGFpbC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/truchien/Downloads/lab03/lab03/lab03/Areas/Admin/Views/ProductAdmin/Display.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXMvQWRtaW4vVmlld3MvUHJvZHVjdEFkbWluL0Rpc3BsYXkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/truchien/Downloads/lab03/lab03/lab03/Areas/Admin/Views/ProductAdmin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvQWRtaW4vVmlld3MvUHJvZHVjdEFkbWluL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/truchien/Downloads/lab03/lab03/lab03/Areas/Admin/Views/ProductAdmin/Update.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXMvQWRtaW4vVmlld3MvUHJvZHVjdEFkbWluL1VwZGF0ZS5jc2h0bWw=
+[/Users/truchien/Downloads/lab03/lab03/lab03/Areas/Admin/Views/UserAdmin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXMvQWRtaW4vVmlld3MvVXNlckFkbWluL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/truchien/Downloads/lab03/lab03/lab03/Areas/Admin/Views/_ViewImports.cshtml]
@@ -102,24 +94,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Categories/Add.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2F0ZWdvcmllcy9BZGQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Categories/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2F0ZWdvcmllcy9EZWxldGUuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Categories/Display.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2F0ZWdvcmllcy9EaXNwbGF5LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Categories/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2F0ZWdvcmllcy9JbmRleC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Categories/Update.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2F0ZWdvcmllcy9VcGRhdGUuY3NodG1s
+[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Account/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Qcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/truchien/Downloads/lab03/lab03/lab03/Views/Home/Branches.cshtml]
@@ -134,24 +110,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Product/Add.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdC9BZGQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Product/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdC9EZWxldGUuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
 [/Users/truchien/Downloads/lab03/lab03/lab03/Views/Product/Display.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdC9EaXNwbGF5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/truchien/Downloads/lab03/lab03/lab03/Views/Product/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdC9JbmRleC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/truchien/Downloads/lab03/lab03/lab03/Views/Product/Update.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUHJvZHVjdC9VcGRhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/truchien/Downloads/lab03/lab03/lab03/Views/Shared/Error.cshtml]

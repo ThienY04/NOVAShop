@@ -1,5 +1,9 @@
 ﻿@model IEnumerable<lab03.Models.Product>
 @using Microsoft.AspNetCore.Mvc.Rendering
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<!-- ✅ Input ẩn chứa token để fetch JavaScript có thể đọc -->
+<input type="hidden" name="__RequestVerificationToken" value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
 
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
@@ -7,6 +11,7 @@
     var selectedCategoryId = Context.Request.Query["categoryId"].ToString();
     var searchName = Context.Request.Query["searchName"].ToString();
 }
+
 
 <h2 class="mb-4">Sản phẩm</h2>
 
@@ -34,6 +39,7 @@
 </form>
 
 <table class="table table-bordered table-hover align-middle text-center">
+    
     <thead class="table-dark">
         <tr>
             <th>Tên</th>
@@ -64,15 +70,39 @@
                 </td>
                 <td>
                     <div class="d-flex gap-1 justify-content-center">
-                        <a asp-area="Admin" asp-controller="ProductAdmin" asp-action="Detail" asp-route-id="@product.Id" class="btn btn-sm btn-outline-info">Xem</a>
-                        <a asp-area="Admin" asp-controller="ProductAdmin" asp-action="Update" asp-route-id="@product.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
-                        <form asp-area="Admin" asp-controller="ProductAdmin" asp-action="Delete" asp-route-id="@product.Id"
-                                method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
-                        </form>
+                        <a asp-area="Admin" asp-controller="ProductAdmin" asp-action="Detail" asp-route-id="@product.Id" class="btn btn-sm btn-outline-info">Xem chi tiết</a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(@product.Id, this)">Xóa</button>
+
                     </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        function confirmDelete(productId, btn) {
+            if (confirm("Bạn chắc chắn muốn xóa tất cả liên quan đến sản phẩm này?")) {
+                fetch(`/Admin/ProductAdmin/Delete/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Xóa dòng khỏi bảng
+                        const row = btn.closest('tr');
+                        row.remove();
+                    } else {
+                        alert("Xóa thất bại. Vui lòng thử lại.");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Có lỗi xảy ra khi xóa.");
+                });
+            }
+        }
+    </script>
+}

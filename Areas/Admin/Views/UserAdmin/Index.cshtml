@@ -1,0 +1,149 @@
+@model List<lab03.Models.UserViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div class="container mt-1">
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" name="search" value="@Context.Request.Query["search"]" placeholder="Tìm theo email, họ tên..." />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" name="status">
+                <option value="">Chọn trạng thái</option>
+                <option value="active" selected="@(Context.Request.Query["status"] == "active")">Hoạt động</option>
+                <option value="locked" selected="@(Context.Request.Query["status"] == "locked")">Đã khóa</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-secondary w-100"><i class="bi bi-filter me-2"></i>Tìm</button>
+        </div>
+    </div>
+</form>
+
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>Hiện không có tài khoản người dùng nào.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Email</th>
+                        <th scope="col">Họ Tên</th>
+                        <th scope="col">SĐT</th>
+                        <th scope="col">Địa chỉ</th>
+                        <th scope="col" class="text-center">Quyền</th>
+                        <th scope="col" class="text-center">Trạng thái</th>
+                        <th scope="col" class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.Email</td>
+                            <td>@user.FullName</td>
+                            <td>@(user.PhoneNumber ?? "-")</td>
+                            <td>@(user.Address ?? "-")</td>
+                            <td class="text-center">
+                                <form asp-action="ChangeRole" method="post" class="d-inline-flex align-items-center">
+                                    <input type="hidden" name="id" value="@user.Id" />
+                                    <select name="newRole" class="form-select form-select-sm me-2" style="max-width: 120px;">
+                                        <option value="Customer" selected="@(user.Role == "Customer")">Customer</option>
+                                        <option value="Admin" selected="@(user.Role == "Admin")">Admin</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" title="Lưu thay đổi quyền">
+                                        <i class="bi bi-save"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-center">
+                                @if (user.IsLocked)
+                                {
+                                    <span class="badge bg-danger rounded-pill px-3 py-2"><i class="bi bi-lock-fill me-1"></i>Đã khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>Hoạt động</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <form asp-action="ToggleLock" method="post" class="d-inline-block me-2">
+                                    <input type="hidden" name="id" value="@user.Id" />
+                                    <button type="submit" class="btn btn-sm @(user.IsLocked ? "btn-success" : "btn-danger")" title="@(user.IsLocked ? "Mở khóa tài khoản" : "Khóa tài khoản")">
+                                        <i class="bi @(user.IsLocked ? "bi-unlock-fill" : "bi-lock-fill") me-1"></i>@(user.IsLocked ? "Mở khóa" : "Khóa")
+                                    </button>
+                                </form>
+                                <button class="btn btn-sm btn-danger text-white delete-user-btn" data-user-id="@user.Id">
+                                    <i class="bi bi-trash-fill me-1"></i>Xoá
+                                </button>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <nav aria-label="Page navigation example" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.delete-user-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const userId = this.getAttribute('data-user-id');
+                if (confirm('Bạn có chắc chắn muốn xoá tài khoản này?')) {
+                    fetch(`/Admin/UserAdmin/Delete/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            this.closest('tr').remove(); // Xoá hàng khỏi bảng
+                        } else {
+                            alert('Không thể xoá tài khoản.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .table td {
+        word-wrap: break-word; /* Tự động bẻ dòng nếu từ quá dài */
+        white-space: normal;   /* Cho phép bẻ dòng */
+    }
+</style>>
+    

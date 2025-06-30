@@ -5,12 +5,12 @@
     ViewData["Title"] = "Log in";
 }
 
-<div class="container mt-5">
+<div class="container mt-1">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-body p-5">
-                    <h2 class="text-center text-primary mb-4">Log in to Your Account</h2>
+                    <h2 class="text-center mb-4" style="color: #050505;">Đăng nhập</h2>
 
                     <form id="account" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
@@ -23,7 +23,7 @@
 
                         <div class="form-floating mb-3">
                             <input asp-for="Input.Password" class="form-control" placeholder="Password" autocomplete="current-password" aria-required="true" />
-                            <label asp-for="Input.Password">Password</label>
+                            <label asp-for="Input.Password">Mật khẩu</label>
                             <span asp-validation-for="Input.Password" class="text-danger small"></span>
                         </div>
 
@@ -35,13 +35,13 @@
                         </div>
 
                         <div class="d-grid mb-3">
-                            <button id="login-submit" type="submit" class="btn btn-primary btn-lg">Log in</button>
+                            <button id="login-submit" type="submit" class="btn btn-dark btn-lg">Đăng nhập</button>
                         </div>
 
                         <div class="text-center">
-                            <p><a asp-page="./ForgotPassword">Forgot your password?</a></p>
-                            <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a></p>
-                            <p><a asp-page="./ResendEmailConfirmation">Resend email confirmation</a></p>
+                            <p><a asp-page="./ForgotPassword">Quên mật khẩu?</a></p>
+                            <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Đăng ký tài khoản mới</a></p>
+                            <p><a asp-page="./ResendEmailConfirmation">Gửi lại email xác nhận</a></p>
                         </div>
                     </form>
                 </div>
@@ -70,3 +70,24 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+<style>
+    /* Đặt màu chữ cho các liên kết */
+    a {
+        color: #555555; /* Màu đen nhạt cho liên kết */
+        text-decoration: none; /* Loại bỏ gạch chân */
+    }
+
+    a:hover {
+        color: #333333; /* Màu đen đậm khi hover */
+    }
+
+    /* Màu của các nhãn (labels) và các ô nhập liệu */
+    label {
+        color: #555555; /* Màu đen nhạt cho nhãn */
+    }
+
+    /* Màu thông báo lỗi khi nhập sai */
+    .text-danger {
+        color: #d9534f; /* Màu đỏ cho thông báo lỗi */
+    }
+</style>

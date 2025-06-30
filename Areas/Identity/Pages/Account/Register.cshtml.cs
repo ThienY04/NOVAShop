@@ -86,6 +86,13 @@ namespace lab03.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+
+            //SĐT
+            [Required]
+            [Phone]
+            [Display(Name = "Số điện thoại")]
+            public string PhoneNumber { get; set; }
+
             
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -106,9 +113,9 @@ namespace lab03.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            public string? Role {  get; set; }
-            [ValidateNever]
-            public IEnumerable<SelectListItem> RoleList { get; set; }
+            // public string? Role {  get; set; }
+            // [ValidateNever]
+            // public IEnumerable<SelectListItem> RoleList { get; set; }
 
         }
 
@@ -122,14 +129,14 @@ namespace lab03.Areas.Identity.Pages.Account
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Company)).GetAwaiter().GetResult();
             }
-            Input = new()
-            {
-                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
-                {     
-                    Text = i,
-                    Value = i
-                })
-            };
+            // Input = new()
+            // {
+            //     RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+            //     {     
+            //         Text = i,
+            //         Value = i
+            //     })
+            // };
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -143,6 +150,8 @@ namespace lab03.Areas.Identity.Pages.Account
                 var user = CreateUser();
 
                 user.FullName = Input.FullName;
+                user.PhoneNumber = Input.PhoneNumber;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -151,14 +160,18 @@ namespace lab03.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    if(!String.IsNullOrEmpty(Input.Role))
-                    {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
-                    }
-                    else
-                    {
-                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
-                    }
+                    // if(!String.IsNullOrEmpty(Input.Role))
+                    // {
+                    //     await _userManager.AddToRoleAsync(user, Input.Role);
+                    // }
+                    // else
+                    // {
+                    //     await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    // }
+
+                    //Sửa thành 
+                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

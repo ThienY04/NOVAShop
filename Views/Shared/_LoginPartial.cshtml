@@ -9,9 +9,20 @@
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
                data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-circle me-1"></i>
-                <strong>@UserManager.GetUserName(User)</strong>
+                @{
+                    var user = await UserManager.GetUserAsync(User);
+                    var displayName = string.IsNullOrWhiteSpace(user?.FullName) ? user?.Email : user.FullName;
+                }
+                <strong>@displayName</strong>
+
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Profile">
+                        <i class="bi bi-person-lines-fill me-2"></i>Trang cá nhân
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
                 <li>
                     <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout"
                           asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

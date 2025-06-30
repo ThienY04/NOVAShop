@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
+<div class="container mt-1">
     <div class="card shadow-lg border-0">
         <div class="card-header bg-primary text-white">
             <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm mới</h4>
@@ -61,7 +61,7 @@
                         <tr>
                             <td><input type="text" name="Colors[0]" class="form-control" placeholder="VD: Đỏ" /></td>
                             <td><input type="text" name="Sizes[0]" class="form-control" placeholder="VD: M" /></td>
-                            <td><input type="number" name="StockByVariant[0]" class="form-control" value="0" /></td>
+                            <td><input type="number" name="StockByVariant[0]" class="form-control" value="1" min="1" /></td>
                             <td></td>
                         </tr>
                     </tbody>
@@ -104,7 +104,7 @@
             row.innerHTML = `
                 <td><input type="text" name="Colors[${rowCount}]" class="form-control" placeholder="VD: Đỏ" /></td>
                 <td><input type="text" name="Sizes[${rowCount}]" class="form-control" placeholder="VD: M" /></td>
-                <td><input type="number" name="StockByVariant[${rowCount}]" class="form-control" value="0" /></td>
+                <td><input type="number" name="StockByVariant[${rowCount}]" class="form-control" value="1" min="1" /></td>
                 <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">🗑️</button></td>
             `;
         }

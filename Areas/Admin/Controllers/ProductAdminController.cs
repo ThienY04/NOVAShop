@@ -61,6 +61,13 @@ public class ProductAdminController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
+        // ✅ Kiểm tra ràng buộc số lượng biến thể
+        if (model.StockByVariant != null && model.StockByVariant.Values.Any(s => s < 1))
+        {
+            ModelState.AddModelError("", "Số lượng của mỗi biến thể không được nhỏ hơn 0.");
+            return View(model);
+        }
+
         // Lưu ảnh
         string? savedImage = null;
         if (model.Image != null)
@@ -193,27 +200,33 @@ public class ProductAdminController : Controller
         ViewBag.Categories = new SelectList(categories, "Id", "Name");
         return View(product);
     }
-    // // Hiển thị form xác nhận xóa sản phẩm
-    // public async Task<IActionResult> Delete(int id)
-    // {
-    //     var product = await _productRepository.GetByIdAsync(id);
-    //     if (product == null)
-    //     {
-    //         return NotFound();
-    //     }
-    //     return View(product);
-    // }
-    // Xử lý xóa sản phẩm
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        await _productRepository.DeleteAsync(id);
-        return RedirectToAction(nameof(Index));
+        var product = await _context.Products
+            .Include(p => p.Variants)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        // Xoá biến thể
+        _context.ProductVariants.RemoveRange(product.Variants);
+
+        // Xoá sản phẩm
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        return Ok(); // Trả về 200 OK cho fetch xử lý
     }
 
 
     //
-        public async Task<IActionResult> Detail(int id)
+    public async Task<IActionResult> Detail(int id)
     {
         var product = await _context.Products
             .Include(p => p.Category)
@@ -226,4 +239,88 @@ public class ProductAdminController : Controller
 
         return View(product);
     }
+
+    //Sửa biến thể
+    [HttpPost]
+    public async Task<IActionResult> UpdateVariant([FromRoute] int id, [FromBody] ProductVariant variant)
+    {
+        if (variant.Stock < 1)
+        {
+            return BadRequest("Số lượng không được âm.");
+        }
+        var existing = await _context.ProductVariants.FindAsync(id);
+        if (existing == null) return NotFound();
+
+        existing.Color = variant.Color;
+        existing.Size = variant.Size;
+        existing.Stock = variant.Stock;
+
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+
+    //Xoá biến thể
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteVariant(int id)
+    {
+        var variant = await _context.ProductVariants.FindAsync(id);
+        if (variant != null)
+        {
+            _context.ProductVariants.Remove(variant);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction("Detail", new { id = variant?.ProductId });
+    }
+
+    //Cập nhật tt chung
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateBasic(int id, [FromBody] Product data)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null) return NotFound();
+
+        product.Name = data.Name;
+        product.Price = data.Price;
+        product.Description = data.Description;
+
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddVariant([FromBody] ProductVariant model)
+    {
+        if (string.IsNullOrWhiteSpace(model.Color) ||
+            string.IsNullOrWhiteSpace(model.Size) ||
+            model.Stock < 1)
+        {
+            return BadRequest("Dữ liệu không hợp lệ.");
+        }
+
+        // Kiểm tra tồn tại sản phẩm
+        var product = await _context.Products.FindAsync(model.ProductId);
+        if (product == null)
+            return NotFound();
+
+        // Tạo mới biến thể
+        var newVariant = new ProductVariant
+        {
+            ProductId = model.ProductId,
+            Color = model.Color,
+            Size = model.Size,
+            Stock = model.Stock
+        };
+
+        _context.ProductVariants.Add(newVariant);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+
 }

@@ -1200,3 +1200,4 @@ C:/Users/Hello!!!/Downloads/lab03/lab03/lab03/obj/Debug/net8.0/ref/lab03.dll
 /Users/truchien/Downloads/lab03/lab03/lab03/obj/Debug/net8.0/lab03.pdb
 /Users/truchien/Downloads/lab03/lab03/lab03/obj/Debug/net8.0/lab03.genruntimeconfig.cache
 /Users/truchien/Downloads/lab03/lab03/lab03/obj/Debug/net8.0/ref/lab03.dll
+/Users/truchien/Downloads/lab03/lab03/lab03/obj/Debug/net8.0/lab03.sourcelink.json
