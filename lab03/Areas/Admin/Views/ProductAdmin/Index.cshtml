@@ -1,13 +1,37 @@
 ﻿@model IEnumerable<lab03.Models.Product>
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Quản lý Sản phẩm";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Danh sách sản phẩm";
+    var isAdmin = User.IsInRole("Admin");
+    var selectedCategoryId = Context.Request.Query["categoryId"].ToString();
+    var searchName = Context.Request.Query["searchName"].ToString();
 }
 
-<h2 class="mb-4">Danh sách sản phẩm</h2>
+<h2 class="mb-4">Sản phẩm</h2>
 
-<a asp-action="Add" class="btn btn-primary mb-3">+ Thêm sản phẩm mới</a>
+<form asp-action="Index" method="get" class="row row-cols-lg-auto g-3 align-items-end mb-4">
+    <div class="col-12 col-md-5">
+        <label for="searchName" class="form-label">Tên sản phẩm</label>
+        <input type="text" name="searchName" class="form-control" placeholder="Nhập tên sản phẩm..." value="@searchName" />
+    </div>
+
+    <div class="col-12 col-md-4">
+        <label for="categoryId" class="form-label">Danh mục</label>
+        <select name="categoryId" class="form-select">
+            <option value="" selected="@(string.IsNullOrEmpty(selectedCategoryId) ? "selected" : null)">Tất cả sản phẩm</option>
+            @foreach (var category in (SelectList)ViewBag.Categories)
+            {
+                var selected = selectedCategoryId == category.Value ? "selected" : null;
+                <option value="@category.Value" selected="@selected">@category.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-12 col-md-3">
+        <button class="btn btn-primary w-100" type="submit">Tìm kiếm</button>
+    </div>
+</form>
 
 <table class="table table-bordered table-hover align-middle text-center">
     <thead class="table-dark">
@@ -17,36 +41,40 @@
             <th>Mô tả</th>
             <th>Danh mục</th>
             <th>Hình ảnh</th>
+            <th>Số lượng tồn</th> <!-- ✅ THÊM CỘT -->
             <th>Hành động</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var product in Model)
         {
-                <tr>
-                    <td>@product.Name</td>
-                    <td>@String.Format("{0:#,##0}₫", product.Price)</td>
-                    <td>@product.Description</td>
-                    <td>@product.Category?.Name</td>
-                    <td>
+            <tr>
+                <td>@product.Name</td>
+                <td>@String.Format("{0:#,##0}₫", product.Price)</td>
+                <td>@product.Description</td>
+                <td>@product.Category?.Name</td>
+                <td>
                     @if (!string.IsNullOrEmpty(product.ImageUrl))
                     {
-                                <img src="~/images/@product.ImageUrl" alt="Ảnh sản phẩm" class="img-thumbnail" width="100" />
+                        <img src="~/images/@product.ImageUrl" alt="Ảnh sản phẩm" class="img-thumbnail" width="100" />
                     }
                     else
                     {
-                                <span class="text-muted">Không có ảnh</span>
+                        <span class="text-muted">Không có ảnh</span>
                     }
-                    </td>
-                    <td>
-                        <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-sm btn-outline-info">Xem</a>
-                        <a asp-action="Update" asp-route-id="@product.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
-                        <form asp-action="Delete" asp-route-id="@product.Id"
-                              method="post" style="display:inline;" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                </td>
+                <td>@(product.Variants?.Sum(v => v.Stock) ?? 0)</td> <!-- ✅ TỔNG STOCK -->
+                <td>
+                    <div class="d-flex gap-1 justify-content-center">
+                        <a asp-area="Admin" asp-controller="ProductAdmin" asp-action="Detail" asp-route-id="@product.Id" class="btn btn-sm btn-outline-info">Xem</a>
+                        <a asp-area="Admin" asp-controller="ProductAdmin" asp-action="Update" asp-route-id="@product.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
+                        <form asp-area="Admin" asp-controller="ProductAdmin" asp-action="Delete" asp-route-id="@product.Id"
+                              method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
                         </form>
-                    </td>
-                </tr>
+                    </div>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

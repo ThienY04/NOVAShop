@@ -1,0 +1,50 @@
+﻿@model lab03.Models.Discount
+
+@{
+    ViewData["Title"] = "Chỉnh sửa mã giảm giá";
+}
+
+<h2 class="mb-4 fw-bold text-primary"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa mã giảm giá</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Code" class="form-label">Mã giảm</label>
+                <input asp-for="Code" class="form-control" placeholder="VD: SALE2025" />
+                <span asp-validation-for="Code" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Value" class="form-label">Giảm (%)</label>
+                <input asp-for="Value" class="form-control" placeholder="Nhập số phần trăm, ví dụ: 10" />
+                <span asp-validation-for="Value" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ExpiryDate" class="form-label">Ngày hết hạn</label>
+                <input asp-for="ExpiryDate" class="form-control" type="datetime-local" />
+                <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+            </div>
+
+            <div class="form-check mb-4">
+                <input class="form-check-input" asp-for="IsActive" />
+                <label class="form-check-label" asp-for="IsActive">Đang hoạt động</label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

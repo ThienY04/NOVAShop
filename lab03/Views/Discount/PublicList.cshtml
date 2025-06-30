@@ -1,0 +1,43 @@
+﻿@model IEnumerable<lab03.Models.Discount>
+
+@{
+    ViewData["Title"] = "Mã giảm giá khả dụng";
+}
+
+<h2 class="mb-4">Các mã giảm giá đang áp dụng</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Hiện không có mã giảm giá nào.</div>
+}
+else
+{
+    <table class="table table-bordered table-hover text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã</th>
+                <th>Giảm (%)</th>
+                <th>Hạn dùng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.Code</strong></td>
+                    <td>@item.Value.ToString("0.#")%</td>
+                    <td>
+                        @if (item.ExpiryDate == DateTime.MinValue)
+                        {
+                            <span class="text-muted">Không giới hạn</span>
+                        }
+                        else
+                        {
+                            @item.ExpiryDate.ToString("dd/MM/yyyy")
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

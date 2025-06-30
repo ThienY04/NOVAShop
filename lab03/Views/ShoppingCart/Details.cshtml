@@ -1,0 +1,64 @@
+﻿@model lab03.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-center fw-bold">📦 Chi tiết đơn hàng #@Model.Id</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="border rounded p-3 bg-white shadow-sm">
+                <h5 class="fw-bold mb-3">🕒 Thông tin đơn hàng</h5>
+                <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                <p><strong>Tổng tiền:</strong> <span class="text-danger fw-bold">@String.Format("{0:n0}₫", Model.TotalPrice)</span></p>
+                <p><strong>Mã giảm giá:</strong> @(string.IsNullOrEmpty(Model.DiscountCode) ? "Không áp dụng" : Model.DiscountCode)</p>
+                <p><strong>Số tiền giảm:</strong> <span class="text-success">@String.Format("{0:n0}₫", Model.DiscountAmount)</span></p>
+                <p><strong>Ghi chú:</strong> @Model.Notes</p>
+                <p><strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="border rounded p-3 bg-white shadow-sm">
+                <h5 class="fw-bold mb-3">👤 Thông tin người dùng</h5>
+                <p><strong>Mã người dùng:</strong> @Model.ApplicationUser?.Id</p>
+                <p><strong>Email:</strong> @Model.ApplicationUser?.Email</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive bg-white shadow-sm rounded p-3">
+        <h5 class="fw-bold mb-3">📋 Danh sách sản phẩm</h5>
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Mã SP</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Màu</th>
+                    <th>Size</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@item.ProductId</td>
+                        <td>@item.Quantity</td>
+                        <td>@String.Format("{0:n0}₫", item.Price)</td>
+                        <td>@item.Color</td>
+                        <td>@item.Size</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 text-end">
+        <a asp-action="MyOrders" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Quay lại đơn hàng
+        </a>
+    </div>
+</div>

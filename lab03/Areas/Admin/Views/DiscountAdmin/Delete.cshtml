@@ -1,0 +1,42 @@
+﻿@model lab03.Models.Discount
+
+@{
+    ViewData["Title"] = "Xoá mã giảm giá";
+}
+
+<div class="container py-4">
+    <h2 class="text-danger fw-bold mb-3"><i class="bi bi-trash-fill me-2"></i>Xác nhận xoá</h2>
+    <p class="lead">Bạn có chắc chắn muốn xoá mã giảm giá sau không?</p>
+
+    <div class="card border-danger mb-4">
+        <div class="card-header bg-danger text-white">
+            <strong>Thông tin mã giảm giá</strong>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Mã giảm</dt>
+                <dd class="col-sm-9">@Model.Code</dd>
+
+                <dt class="col-sm-3">Giảm (%)</dt>
+                <dd class="col-sm-9">@Model.Value.ToString("n0")%</dd>
+
+                <dt class="col-sm-3">Ngày hết hạn</dt>
+                <dd class="col-sm-9">@Model.ExpiryDate.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Trạng thái</dt>
+                <dd class="col-sm-9">
+                    @(Model.IsActive ? "Đang hoạt động" : "Ngưng sử dụng")
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+
+        <button type="submit" class="btn btn-danger me-2">
+            <i class="bi bi-trash"></i> Xoá
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>
