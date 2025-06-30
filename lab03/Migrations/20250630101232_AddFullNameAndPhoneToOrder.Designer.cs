@@ -12,8 +12,8 @@ using lab03.Models;
 namespace lab03.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250629175742_AddDiscountTable")]
-    partial class AddDiscountTable
+    [Migration("20250630101232_AddFullNameAndPhoneToOrder")]
+    partial class AddFullNameAndPhoneToOrder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -291,12 +291,27 @@ namespace lab03.Migrations
                     b.Property<string>("DiscountCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Notes")
+                    b.Property<string>("FullName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShippingAddress")
                         .IsRequired()

@@ -78,3 +78,30 @@
         }
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        function confirmDelete(productId, btn) {
+            if (confirm("Bạn chắc chắn muốn xóa tất cả liên quan đến sản phẩm này?")) {
+                fetch(`/Admin/ProductAdmin/Delete/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Xóa dòng khỏi bảng
+                        const row = btn.closest('tr');
+                        row.remove();
+                    } else {
+                        alert("Xóa thất bại. Vui lòng thử lại.");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Có lỗi xảy ra khi xóa.");
+                });
+            }
+        }
+    </script>
+}

@@ -1,0 +1,74 @@
+﻿@model List<lab03.Models.Order>
+@{
+    ViewData["Title"] = "Đơn hàng đã bán";
+}
+
+<h2 class="mb-4"><i class="bi bi-box-seam"></i> Đơn hàng đã bán</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Hiện chưa có đơn hàng nào được bán.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle shadow-sm">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Người mua</th>
+                    <th>Ngày đặt</th>
+                    <th>Phương thức</th>
+                    <th>Trạng thái</th>
+                    <th>Tổng tiền</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr class="text-center">
+                        <td><strong>#@order.Id</strong></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(order.ApplicationUser?.FullName) && !order.ApplicationUser.FullName.ToLower().Contains("admin"))
+                            {
+                                @order.ApplicationUser.FullName <br />
+                            }
+                            <small class="text-muted">@order.ApplicationUser?.Email</small>
+                        </td>
+
+                        <td>@order.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (order.PaymentMethod == "BANK_TRANSFER")
+                            {
+                                <span class="badge bg-info text-dark"><i class="bi bi-bank"></i> Chuyển khoản</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary"><i class="bi bi-cash-coin"></i> COD</span>
+                            }
+                        </td>
+                        <td>
+                            @if (order.PaymentStatus == "Paid")
+                            {
+                                <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Đã thanh toán</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-circle"></i> Chưa thanh toán</span>
+                            }
+                        </td>
+                        <td><strong>@string.Format("{0:n0}₫", order.TotalPrice)</strong></td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Xem
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -24,6 +24,7 @@
             -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
         }
+
         :root {
             --primary: #0d6efd;
             --secondary: #6c757d;
@@ -169,14 +170,24 @@
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DiscountAdmin" ? "active" : "")"
                                        asp-area="Admin" asp-controller="DiscountAdmin" asp-action="Index">Mã giảm giá</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "OrderAdmin" ? "active" : "")"
+                                       class="nav-link" asp-area="Admin" asp-controller="OrderAdmin" asp-action="Sales"> Đơn hàng đã bán</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Dashboard">
+                                        Thống kê tổng quan
+                                    </a>
+                                </li>
                             }
-                            else
+                            else if (User.Identity.IsAuthenticated)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Discount" && ViewContext.RouteData.Values["action"]?.ToString() == "PublicList" ? "active" : "")"
                                        asp-controller="Discount" asp-action="PublicList">Mã giảm giá</a>
                                 </li>
                             }
+
                             @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
