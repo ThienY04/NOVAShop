@@ -1,0 +1,72 @@
+﻿@model IEnumerable<lab03.Models.Discount>
+@{
+    ViewData["Title"] = "Mã giảm giá";
+}
+
+<div class="container py-5">
+    <h2 class="text-center fw-bold mb-4">🎁 Danh sách mã giảm giá</h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle me-1"></i> Tạo mã mới
+        </a>
+    </div>
+
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover table-bordered align-middle bg-white text-center">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col">🔖 Mã</th>
+                    <th scope="col">💸 Giảm (%)</th>
+                    <th scope="col">📅 Hạn sử dụng</th>
+                    <th scope="col">✅ Kích hoạt</th>
+                    <th scope="col">⚙️ Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-muted py-4">Không có mã giảm giá nào.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.Code</strong></td>
+                            <td class="text-danger fw-semibold">@($"{item.Value:n0}%")</td>
+                            <td>
+                                @(item.ExpiryDate == DateTime.MinValue
+                                    ? "Không xác định"
+                                    : item.ExpiryDate.ToString("dd/MM/yyyy HH:mm"))
+                            </td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success">Đang áp dụng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Không áp dụng</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning me-1">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn xoá?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

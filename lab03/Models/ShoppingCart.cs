@@ -2,12 +2,15 @@
 {
     public class ShoppingCart
     {
-        public List<CartItem> Items { get; set; } = new
-        List<CartItem>();
+        public List<CartItem> Items { get; set; } = new List<CartItem>();
+
         public void AddItem(CartItem item)
         {
-            var existingItem = Items.FirstOrDefault(i => i.ProductId ==
-            item.ProductId);
+            var existingItem = Items.FirstOrDefault(i =>
+                i.ProductId == item.ProductId &&
+                i.Size == item.Size &&
+                i.Color == item.Color);
+
             if (existingItem != null)
             {
                 existingItem.Quantity += item.Quantity;
@@ -17,10 +20,32 @@
                 Items.Add(item);
             }
         }
-        public void RemoveItem(int productId)
+        public void UpdateItem(int productId, string size, string color, int quantity)
         {
-            Items.RemoveAll(i => i.ProductId == productId);
+            var item = Items.FirstOrDefault(i =>
+                i.ProductId == productId &&
+                i.Size == size &&
+                i.Color == color);
+
+            if (item != null)
+            {
+                if (quantity > 0)
+                {
+                    item.Quantity = quantity;
+                }
+                else
+                {
+                    RemoveItem(productId, size, color);
+                }
+            }
+        }
+
+        public void RemoveItem(int productId, string size, string color)
+        {
+            Items.RemoveAll(i =>
+                i.ProductId == productId &&
+                i.Size == size &&
+                i.Color == color);
         }
     }
-
 }

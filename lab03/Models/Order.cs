@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lab03.Models
 {
-    public class Order 
+    public class Order
     {
         public int Id { get; set; }
         public string UserId { get; set; }
@@ -16,6 +16,11 @@ namespace lab03.Models
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
+        public string? DiscountCode { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public string? VoucherCode { get; set; }  // Mã giảm giá
+
+
     }
- 
+
 }

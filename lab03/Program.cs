@@ -14,11 +14,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = $"/Identity?Account/Login";
-    options.LogoutPath = $"/Identity?Account/Logout";
-    options.LogoutPath = $"/Identity?Account/AccessDenied";
-    
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 });
+
 builder.Services.AddRazorPages();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -57,19 +57,19 @@ app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthentication();
 app.UseAuthorization();
 
 
 
 // Cấu hình routing cho Admin Area
 app.MapControllerRoute(
-	name: "Admin",
-	pattern: "{area:exists}/{controller=ProductAdmin}/{action=Index}/{id?}"
+    name: "Admin",
+    pattern: "{area:exists}/{controller=ProductAdmin}/{action=Index}/{id?}"
 );
 
 app.MapControllerRoute(
-   
+
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 

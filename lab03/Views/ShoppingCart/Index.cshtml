@@ -1,65 +1,139 @@
 ﻿@model ShoppingCart
 
-<h2>Your Cart</h2>
+<h2 class="mb-4">Giỏ hàng của bạn</h2>
 
-<div class="table-responsive">
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">Product</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Price</th>
-                <th scope="col">Total</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+@if (Model.Items.Any())
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Price</td> 
-                    <td>@(item.Price * item.Quantity)</td> 
-                    <td>
-                        <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-danger btn-sm">
-                            Remove
-                        </a>
-                    </td>
+                    <th style="width: 120px;">Ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Tổng</th>
+                    <th></th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <!-- Ảnh sản phẩm -->
+                        <td>
+                            <img src="~/images/@item.ImageUrl" alt="@item.Name" class="img-thumbnail" style="max-width: 100px;" />
+                        </td>
+
+                        <!-- Tên + Size + Màu -->
+                        <td>
+                            <strong>@item.Name</strong><br />
+                            <small class="text-muted">Size: @item.Size | Màu: @item.Color</small>
+                        </td>
+
+                        <!-- Số lượng chỉnh được -->
+                        <td>
+                            <input type="number" value="@item.Quantity" min="1"
+                                   class="form-control form-control-sm quantity-input"
+                                   data-product-id="@item.ProductId"
+                                   data-size="@item.Size"
+                                   data-color="@item.Color"
+                                   style="width: 80px;" />
+                        </td>
+
+                        <!-- Giá -->
+                        <td>@item.Price.ToString("n0")₫</td>
+
+                        <!-- Tổng -->
+                        <td class="text-danger fw-bold item-total"
+                            data-product-id="@item.ProductId"
+                            data-size="@item.Size"
+                            data-color="@item.Color">
+                            @((item.Price * item.Quantity).ToString("n0"))₫
+                        </td>
+
+                        <!-- Xoá -->
+                        <td>
+                            <a asp-action="RemoveFromCart"
+                               asp-route-productId="@item.ProductId"
+                               asp-route-size="@item.Size"
+                               asp-route-color="@item.Color"
+                               class="btn btn-sm btn-outline-danger" title="Xoá khỏi giỏ hàng">
+                                <i class="bi bi-trash"></i> Xoá
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tổng tiền toàn giỏ hàng -->
+    <div class="d-flex justify-content-end mt-3">
+        <h5>Tổng cộng: <span id="cart-total">@Model.Items.Sum(i => i.Price * i.Quantity).ToString("n0")₫</span></h5>
+    </div>
+
+    <!-- Nút tới thanh toán -->
+    <div class="d-flex justify-content-end mt-3">
+        <a asp-action="Checkout" class="btn btn-dark btn-lg px-4">
+            Tới trang thanh toán
+        </a>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Giỏ hàng của bạn đang trống.</div>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.quantity-input').on('change', function () {
+                const input = $(this);
+                const newQuantity = parseInt(input.val());
+                const productId = input.data('product-id');
+                const size = input.data('size');
+                const color = input.data('color');
+
+                if (newQuantity < 1) return;
+
+                $.ajax({
+                    url: '/ShoppingCart/UpdateCartItem',
+                    method: 'POST',
+                    data: {
+                        productId: productId,
+                        size: size,
+                        color: color,
+                        quantity: newQuantity
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Cập nhật tổng tiền mỗi dòng
+                            const itemTotal = $('td.item-total[data-product-id="' + productId + '"][data-size="' + size + '"][data-color="' + color + '"]');
+                            itemTotal.text(response.totalItemPrice.toLocaleString() + '₫');
+
+                            // Cập nhật tổng giỏ hàng
+                            $('#cart-total').text(response.cartTotal.toLocaleString() + '₫');
+                        } else {
+                            alert(response.message);
+
+                            // Nếu server gửi availableStock, reset input
+                            if (response.availableStock !== undefined) {
+                                input.val(response.availableStock);
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                document.body.innerHTML = '<div class="text-center mt-5"><h4>Đang tải lại giỏ hàng...</h4></div>';
+                location.reload();
             }
-        </tbody>
-    </table>
-</div>
-
-<a asp-action="Checkout" class="btn btn-success btn-lg mt-3">Tới trang thanh toán</a>
-
-<style>
-    .table {
-        background-color: #cce6ff; 
-        color: #003366; 
-    }
-
-    .thead-dark {
-        background-color: #0059b3 !important; 
-        color: #ffffff !important; 
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #e6f2ff; 
-    }
-
-    .table-striped tbody tr:nth-of-type(even) {
-        background-color: #cce6ff; 
-    }
-
-    .btn-danger {
-        background-color: #ff6666;
-        border-color: #ff4d4d;
-    }
-
-    .btn-success {
-        background-color: #66cc66;
-        border-color: #4da64d;
-    }
-</style>
+        });
+    </script>
+}

@@ -1,0 +1,46 @@
+﻿@model List<lab03.Models.Order>
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<div class="container py-5">
+    <h2 class="mb-4 fw-bold text-center">📦 Đơn hàng của tôi</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Bạn chưa có đơn hàng nào.<br />
+            <a asp-controller="Product" asp-action="Index" class="btn btn-primary mt-3">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-bordered align-middle text-center bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col"># Mã đơn</th>
+                        <th scope="col">🕒 Ngày đặt</th>
+                        <th scope="col">💰 Tổng tiền</th>
+                        <th scope="col">🔍 Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td><strong>#@order.Id</strong></td>
+                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-danger fw-bold">@String.Format("{0:n0}₫", order.TotalPrice)</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Chi tiết
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,42 @@
+@model List<BranchView>
+@{
+    ViewData["Title"] = "Hệ thống cửa hàng";
+    string defaultMap = Model.First().GoogleMapsEmbedUrl;
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <!-- DANH SÁCH CHI NHÁNH -->
+        <div class="col-md-4">
+            <h4 class="mb-3">Bản đồ</h4>
+            <div class="list-group">
+                @foreach (var branch in Model)
+                {
+                    <a href="#" class="list-group-item list-group-item-action"
+                       onclick="changeMap('@branch.GoogleMapsEmbedUrl'); return false;">
+                        <h6 class="mb-1">@branch.Title</h6>
+                        <p class="mb-1"><i class="fa fa-map-marker-alt text-danger"></i> @branch.Address</p>
+                        <p class="mb-1"><i class="fa fa-phone text-primary"></i> @branch.PhoneNumber</p>
+                    </a>
+                }
+            </div>
+        </div>
+        <!-- IFRAME BẢN ĐỒ -->
+        <div class="col-md-8">
+            <h4 class="mb-3">Bản đồ</h4>
+            <iframe id="mapFrame"
+                    src="@defaultMap"
+                    width="100%" height="500" style="border:0;" allowfullscreen=""
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeMap(url) {
+            document.getElementById("mapFrame").src = url;
+        }
+    </script>
+}
