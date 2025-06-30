@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using lab03.Models;
 using lab03.Repositories;
 using lab03.ViewModels;
-using Microsoft.EntityFrameworkCore; // Thay thế bằng namespace thực tếcủa bạn
+using Microsoft.EntityFrameworkCore;
 
 [Area("Admin")]
 [Authorize(Roles = SD.Role_Admin)]
@@ -58,6 +58,12 @@ public class ProductAdminController : Controller
 
         if (!ModelState.IsValid)
             return View(model);
+        // Validate số lượng biến thể
+        if (model.StockByVariant != null && model.StockByVariant.Values.Any(s => s < 1))
+        {
+            ModelState.AddModelError("", "Số lượng của mỗi biến thể không được nhỏ hơn 1.");
+            return View(model);
+        }
 
         // Lưu ảnh
         string? savedImage = null;
@@ -115,7 +121,7 @@ public class ProductAdminController : Controller
     }
 
 
-    // Viết thêm hàm SaveImage (tham khảo bài 02)
+    // Lưu ảnh
     private async Task<string> SaveImage(IFormFile image)
     {
         //Thay đổi đường dẫn theo cấu hình của bạn
@@ -151,8 +157,7 @@ public class ProductAdminController : Controller
             return NotFound();
         }
         var categories = await _categoryRepository.GetAllAsync();
-        ViewBag.Categories = new SelectList(categories, "Id", "Name",
-        product.CategoryId);
+        ViewBag.Categories = new SelectList(categories, "Id", "Name", product.CategoryId);
         return View(product);
     }
     // Xử lý cập nhật sản phẩm
@@ -166,8 +171,7 @@ public class ProductAdminController : Controller
         }
         if (ModelState.IsValid)
         {
-            var existingProduct = await
-            _productRepository.GetByIdAsync(id);
+            var existingProduct = await  _productRepository.GetByIdAsync(id);
             if (imageUrl == null)
             {
                 product.ImageUrl = existingProduct.ImageUrl;
@@ -190,26 +194,21 @@ public class ProductAdminController : Controller
         ViewBag.Categories = new SelectList(categories, "Id", "Name");
         return View(product);
     }
-    // // Hiển thị form xác nhận xóa sản phẩm
-    // public async Task<IActionResult> Delete(int id)
-    // {
-    //     var product = await _productRepository.GetByIdAsync(id);
-    //     if (product == null)
-    //     {
-    //         return NotFound();
-    //     }
-    //     return View(product);
-    // }
-    // Xử lý xóa sản phẩm
+    // Xóa sản phẩm cùng biến thể
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        await _productRepository.DeleteAsync(id);
+        var product = await _context.Products.Include(p => p.Variants).FirstOrDefaultAsync(p => p.Id == id);
+        if (product == null) return NotFound();
+
+        _context.ProductVariants.RemoveRange(product.Variants);
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
         return RedirectToAction(nameof(Index));
     }
-
-
-    //
+    //Gửi danh mục sang detail
     public async Task<IActionResult> Detail(int id)
     {
         var product = await _context.Products
@@ -220,7 +219,98 @@ public class ProductAdminController : Controller
 
         if (product == null)
             return NotFound();
+        // Gửi danh sách danh mục sang view
+        var categories = await _categoryRepository.GetAllAsync();
+        ViewBag.Categories = new SelectList(categories, "Id", "Name");
 
         return View(product);
+
     }
+    // Sửa biến thể
+    [HttpPost]
+    public async Task<IActionResult> UpdateVariant([FromRoute] int id, [FromBody] ProductVariant variant)
+    {
+        if (variant.Stock < 1)
+            return BadRequest("Số lượng không được âm.");
+
+        var existing = await _context.ProductVariants.FindAsync(id);
+        if (existing == null) return NotFound();
+
+        existing.Color = variant.Color;
+        existing.Size = variant.Size;
+        existing.Stock = variant.Stock;
+
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    // Xóa biến thể
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteVariant(int id)
+    {
+        var variant = await _context.ProductVariants.FindAsync(id);
+        if (variant != null)
+        {
+            _context.ProductVariants.Remove(variant);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction("Detail", new { id = variant?.ProductId });
+    }
+
+    //Cập nhật tt chung
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateBasic(ProductViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest("Dữ liệu không hợp lệ");
+
+        var product = await _context.Products.FindAsync(model.Id);
+        if (product == null) return NotFound();
+
+        product.Name = model.Name;
+        product.Price = model.Price;
+        product.Description = model.Description;
+        product.CategoryId = model.CategoryId;
+
+        if (model.Image != null)
+        {
+            product.ImageUrl = await SaveImage(model.Image);
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    // Thêm biến thể mới
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddVariant([FromBody] ProductVariant model)
+    {
+        if (string.IsNullOrWhiteSpace(model.Color) ||
+            string.IsNullOrWhiteSpace(model.Size) ||
+            model.Stock < 1)
+        {
+            return BadRequest("Dữ liệu không hợp lệ.");
+        }
+
+        var product = await _context.Products.FindAsync(model.ProductId);
+        if (product == null) return NotFound();
+
+        var newVariant = new ProductVariant
+        {
+            ProductId = model.ProductId,
+            Color = model.Color,
+            Size = model.Size,
+            Stock = model.Stock
+        };
+
+        _context.ProductVariants.Add(newVariant);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
 }

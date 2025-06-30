@@ -122,8 +122,6 @@ namespace lab03.Controllers
         }
 
 
-
-
         public IActionResult RemoveFromCart(int productId, string size, string color)
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>(GetCartKey()) ?? new ShoppingCart();
@@ -154,7 +152,7 @@ namespace lab03.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Checkout(Order order, string? VoucherCode)
+        public async Task<IActionResult> Checkout(Order order, string? VoucherCode, string CustomerName, string PhoneNumber)
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>(GetCartKey());
             if (cart == null || !cart.Items.Any())
@@ -166,6 +164,20 @@ namespace lab03.Controllers
             var user = await _userManager.GetUserAsync(User);
             order.UserId = user.Id;
             order.OrderDate = DateTime.UtcNow;
+            order.FullName = CustomerName;
+            order.PhoneNumber = PhoneNumber;
+            order.PaymentStatus = "Pending"; // mặc định
+
+            if (string.IsNullOrWhiteSpace(order.Notes))
+            {
+                order.Notes = "";
+            }
+
+            if (string.IsNullOrWhiteSpace(order.PaymentMethod))
+            {
+                ModelState.AddModelError("PaymentMethod", "Vui lòng chọn phương thức thanh toán.");
+                return View(order);
+            }
 
             int discountAmount = 0;
 
@@ -175,11 +187,11 @@ namespace lab03.Controllers
                     .FirstOrDefaultAsync(d =>
                         d.Code == VoucherCode &&
                         d.IsActive &&
-                        (d.ExpiryDate == default || d.ExpiryDate > DateTime.Now)); 
+                        (d.ExpiryDate == default || d.ExpiryDate > DateTime.Now));
 
                 if (discount != null)
                 {
-                    discountAmount = (int)discount.Value; 
+                    discountAmount = (int)discount.Value;
                     order.DiscountCode = discount.Code;
                     order.DiscountAmount = discountAmount;
                 }
@@ -220,7 +232,13 @@ namespace lab03.Controllers
 
             HttpContext.Session.Remove(GetCartKey());
 
+            if (!string.IsNullOrEmpty(order.PaymentMethod) && order.PaymentMethod.Trim().ToUpper() == "BANK_TRANSFER")
+            {
+                return RedirectToAction("BankTransfer", new { orderId = order.Id });
+            }
+
             return View("OrderCompleted", order.Id);
+
         }
 
 
@@ -300,6 +318,17 @@ namespace lab03.Controllers
                 return NotFound();
 
             return View(order); // ✅ Trả về đúng kiểu Order
+        }
+        public async Task<IActionResult> BankTransfer(int orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+                return NotFound();
+
+            return View(order); // Bạn cần tạo view BankTransfer.cshtml
         }
 
     }

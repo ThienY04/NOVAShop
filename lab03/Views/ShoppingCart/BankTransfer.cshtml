@@ -1,0 +1,43 @@
+﻿@model lab03.Models.Order
+
+@{
+    ViewData["Title"] = "Chuyển khoản ngân hàng";
+}
+
+<div class="container py-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-success">🎉 Cảm ơn bạn đã đặt hàng!</h2>
+        <p>Vui lòng thực hiện chuyển khoản theo thông tin dưới đây để hoàn tất đơn hàng.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white fw-bold">
+                    Thông tin chuyển khoản
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">🏦 <strong>Ngân hàng:</strong> Vietcombank</li>
+                    <li class="list-group-item">📄 <strong>Số tài khoản:</strong> 0123456789</li>
+                    <li class="list-group-item">👤 <strong>Chủ tài khoản:</strong> Nguyễn Văn A</li>
+                    <li class="list-group-item">
+                        💬 <strong>Nội dung chuyển khoản:</strong>
+                        <span class="text-danger">Order_@Model.Id</span>
+                    </li>
+                    <li class="list-group-item">
+                        💰 <strong>Số tiền:</strong>
+                        <span class="text-primary">@String.Format("{0:n0}₫", Model.TotalPrice)</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="alert alert-warning mt-4" role="alert">
+                ⚠️ Sau khi chuyển khoản, vui lòng liên hệ qua Zalo/Facebook để được xác nhận nhanh chóng.
+            </div>
+
+            <div class="text-center mt-4">
+                <a class="btn btn-dark" href="/">🏠 Quay lại trang chủ</a>
+            </div>
+        </div>
+    </div>
+</div>

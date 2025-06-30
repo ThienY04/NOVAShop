@@ -1,0 +1,88 @@
+@model lab03.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    bool isEditMode = ViewBag.IsEditMode == true;
+}
+
+<div class="container py-4"> @* Giảm padding tổng thể *@
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5"> @* Giảm độ rộng của cột để card nhỏ gọn hơn *@
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body p-4"> @* Giảm padding bên trong card *@
+                    <h4 class="text-center mb-4 pb-2 border-bottom" style="color: #212529; font-weight: 700; border-color: #e0e0e0 !important;">
+                        @if (isEditMode)
+                        {
+                            <span>CẬP NHẬT THÔNG TIN</span>
+                        }
+                        else
+                        {
+                            <span>THÔNG TIN TÀI KHOẢN</span>
+                        }
+                    </h4> @* Giảm tiêu đề từ h2 xuống h4 *@
+
+                    <form asp-action="Profile" method="post">
+                        @if (isEditMode)
+                        {
+                            <div class="mb-3"> @* Giảm khoảng trống dưới mỗi input *@
+                                <label for="FullName" class="form-label fw-semibold" style="color: #333; font-size: 0.95rem;">Họ tên:</label> @* Giảm font size cho label *@
+                                <input id="FullName" name="FullName" value="@Model.FullName" class="form-control rounded-pill border-dark" required style="color: #333; font-size: 0.95rem;"/> @* Giảm input size (bỏ form-control-lg), bo tròn, viền đen *@
+                                <span asp-validation-for="FullName" class="text-danger small"></span> @* Thêm small class cho lỗi validation *@
+                            </div>
+                            <div class="mb-3">
+                                <label for="PhoneNumber" class="form-label fw-semibold" style="color: #333; font-size: 0.95rem;">Số điện thoại:</label>
+                                <input id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" class="form-control rounded-pill border-dark" style="color: #333; font-size: 0.95rem;"/>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-4"> @* Giữ mb-4 cho cái cuối để tạo khoảng cách với nút *@
+                                <label for="Address" class="form-label fw-semibold" style="color: #333; font-size: 0.95rem;">Địa chỉ:</label>
+                                <input id="Address" name="Address" value="@Model.Address" class="form-control rounded-pill border-dark" style="color: #333; font-size: 0.95rem;"/>
+                                <span asp-validation-for="Address" class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-3"> @* Giảm khoảng cách trên cùng của nút *@
+                                <button type="submit" class="btn btn-dark fw-bold rounded-pill" style="background-color: #212529; border-color: #212529; font-size: 0.95rem; padding: 0.6rem 1rem;">
+                                    <i class="fas fa-save me-2"></i> LƯU THAY ĐỔI
+                                </button>
+                                <a asp-action="Profile" class="btn btn-outline-dark fw-bold rounded-pill mt-2" style="color: #212529; border-color: #212529; font-size: 0.95rem; padding: 0.6rem 1rem;">
+                                    <i class="fas fa-times me-2"></i> HỦY
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row mb-2"> @* Giảm khoảng cách giữa các dòng thông tin *@
+                                <div class="col-sm-4 text-sm-end text-muted small">Họ tên:</div> @* Nhãn nhỏ hơn *@
+                                <div class="col-sm-8" style="color: #333; font-weight: 600; font-size: 0.95rem;">@Model.FullName</div> @* Dữ liệu nhỏ hơn *@
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-sm-end text-muted small">Email:</div>
+                                <div class="col-sm-8" style="color: #333; font-weight: 600; font-size: 0.95rem;">@Model.Email</div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-sm-end text-muted small">Số điện thoại:</div>
+                                <div class="col-sm-8" style="color: #333; font-weight: 600; font-size: 0.95rem;">@Model.PhoneNumber</div>
+                            </div>
+
+                            <div class="row mb-3"> @* Giảm khoảng cách dưới dòng cuối *@
+                                <div class="col-sm-4 text-sm-end text-muted small">Địa chỉ:</div>
+                                <div class="col-sm-8" style="color: #333; font-weight: 600; font-size: 0.95rem;">@((Model.Address ?? ""))</div>
+                            </div>
+
+                            <a asp-action="Profile" asp-route-edit="true" class="btn btn-dark w-100 mt-3 fw-bold rounded-pill" style="background-color: #212529; border-color: #212529; font-size: 0.95rem; padding: 0.6rem 1rem;">
+                                <i class="fas fa-edit me-2"></i> CHỈNH SỬA THÔNG TIN
+                            </a> @* Giảm padding và font-size cho nút *@
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

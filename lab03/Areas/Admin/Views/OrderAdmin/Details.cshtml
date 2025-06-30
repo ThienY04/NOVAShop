@@ -1,0 +1,86 @@
+﻿@model lab03.Models.Order
+@{
+    ViewData["Title"] = $"Chi tiết đơn hàng #{Model.Id}";
+}
+
+<h2 class="mb-4">📋 Chi tiết đơn hàng #@Model.Id</h2>
+
+<!-- Thông tin người mua -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">👤 Thông tin người mua</div>
+    <div class="card-body">
+        <p>
+        <p>
+            <strong>Họ tên:</strong> @(string.IsNullOrWhiteSpace(Model.FullName) ? "Không có" : Model.FullName)
+        </p>
+
+        </p>
+        <p><strong>Email:</strong> @Model.ApplicationUser?.Email</p>
+    </div>
+</div>
+
+<!-- Thông tin đơn hàng -->
+<div class="card mb-4">
+    <div class="card-header bg-secondary text-white">🧾 Thông tin đơn hàng</div>
+    <div class="card-body">
+        <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p>
+
+        <p>
+            <strong>Phương thức thanh toán:</strong>
+            @(Model.PaymentMethod == "BANK_TRANSFER" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng")
+        </p>
+        <p>
+            <strong>Trạng thái thanh toán:</strong>
+            @if (Model.PaymentStatus == "Paid")
+            {
+                <span class="text-success fw-bold">Đã thanh toán</span>
+            }
+            else
+            {
+                <span class="text-warning">Chưa thanh toán</span>
+            }
+        </p>
+        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+        {
+            <p><strong>Ghi chú:</strong> @Model.Notes</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.DiscountCode))
+        {
+            <p><strong>Mã giảm giá:</strong> <span class="text-success">@Model.DiscountCode</span></p>
+            <p><strong>Giá trị giảm:</strong> -@String.Format("{0:n0}₫", Model.DiscountAmount)</p>
+        }
+        <p><strong>Tổng tiền:</strong> <span class="text-danger fw-bold">@String.Format("{0:n0}₫", Model.TotalPrice)</span></p>
+    </div>
+</div>
+
+<!-- Danh sách sản phẩm -->
+<h4 class="mb-3">🛍️ Sản phẩm đã mua</h4>
+<table class="table table-striped table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Tên sản phẩm</th>
+            <th>Màu</th>
+            <th>Size</th>
+            <th>SL</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.Product?.Name</td>
+                <td>@item.Color</td>
+                <td>@item.Size</td>
+                <td>@item.Quantity</td>
+                <td>@String.Format("{0:n0}₫", item.Price)</td>
+                <td>@String.Format("{0:n0}₫", item.Price * item.Quantity)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mt-4">
+    <a asp-action="Sales" class="btn btn-secondary">← Quay lại danh sách</a>
+</div>
